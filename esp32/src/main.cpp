@@ -1,112 +1,46 @@
 #include <Arduino.h>
-#include <WiFi.h>
-#include <PubSubClient.h>
-#include <ArduinoJson.h>
+#include "wifi_manager.h"
+#include "mqtt_manager.h"
 #include "secrets.h"
+#include "device.h"
 
 WiFiClient espClient;
-PubSubClient mqttClient(espClient);
+mqtt_manager mqttClient(espClient);
 
 String deviceId;
 String topic;
 
-String generateDeviceIdFromEfuse()
-{
-  uint64_t chipId = ESP.getEfuseMac();
-  char id[32];
-  snprintf(id, sizeof(id), "esp32-%04X%08X",
-           (uint16_t)(chipId >> 32),
-           (uint32_t)chipId);
-  return String(id);
-}
-
-void connectWiFi()
-{
-  Serial.print("Laczenie z Wi-Fi: ");
-  Serial.println(WIFI_SSID);
-
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    Serial.print(".");
-  }
-
-  Serial.println();
-  Serial.println("Polaczono z Wi-Fi");
-  Serial.print("Adres IP: ");
-  Serial.println(WiFi.localIP());
-}
-
-void connectMQTT()
-{
-  mqttClient.setServer(MQTT_HOST, MQTT_PORT);
-
-  while (!mqttClient.connected())
-  {
-    Serial.print("Laczenie z MQTT...");
-    if (mqttClient.connect(deviceId.c_str()))
-    {
-      Serial.println("OK");
-    }
-    else
-    {
-      Serial.print("blad, rc=");
-      Serial.print(mqttClient.state());
-      Serial.println(" - ponowna proba za 2 s");
-      delay(2000);
-    }
-  }
-}
-
-void publishMeasurement()
-{
-  StaticJsonDocument<256> doc;
-  doc["device_id"] = deviceId;
-  doc["sensor"] = "temperature";
-  doc["value"] = 24.5;
-  doc["unit"] = "C";
-  doc["ts_ms"] = millis();
-
-  char payload[256];
-  serializeJson(doc, payload);
-
-  mqttClient.publish(topic.c_str(), payload);
-  Serial.print("Publikacja na topic: ");
-  Serial.println(topic);
-  Serial.println(payload);
-}
 void setup()
 {
   Serial.begin(115200);
   delay(1000);
 
   deviceId = generateDeviceIdFromEfuse();
-  topic = "lab/" + String(MQTT_GROUP) + "/" + deviceId + "/temperature";
+  topic = "lab/" + String(MQTT_GROUP) + "/" + deviceId;
 
   Serial.print("Device ID: ");
   Serial.println(deviceId);
 
+  mqttClient.begin(deviceId, topic);
+
   connectWiFi();
-  connectMQTT();
+  mqttClient.connectMQTT();
 }
 
 void loop()
 {
-  if (WiFi.status() != WL_CONNECTED)
+  if (!isWiFiConnected())
   {
     connectWiFi();
   }
 
-  if (!mqttClient.connected())
+  if (!mqttClient.isConnected())
   {
-    connectMQTT();
+    mqttClient.connectMQTT();
   }
 
   mqttClient.loop();
-  publishMeasurement();
+  mqttClient.publishMeasurement("temperature", 24.5, "C");
   
   delay(5000);
 }
