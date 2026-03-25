@@ -4,5 +4,6 @@
 #include <Arduino.h>
 
 String generateDeviceIdFromEfuse();
+String generateDeviceIdFromNvs();
 
 #endif // DEVICE_H

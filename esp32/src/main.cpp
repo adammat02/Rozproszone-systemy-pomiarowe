@@ -16,7 +16,7 @@ void setup()
   Serial.begin(115200);
   delay(1000);
 
-  deviceId = generateDeviceIdFromEfuse();
+  deviceId = generateDeviceIdFromNvs();
   topic = "lab/" + String(MQTT_GROUP) + "/" + deviceId;
 
   Serial.print("Device ID: ");
