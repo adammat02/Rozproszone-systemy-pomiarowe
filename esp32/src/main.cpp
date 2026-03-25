@@ -40,7 +40,9 @@ void loop()
   }
 
   mqttClient.loop();
-  mqttClient.publishMeasurement("temperature", 24.5, "C");
+  
+  float tempC = temperatureRead();
+  mqttClient.publishMeasurement("temperature", tempC, "C");
   
   delay(5000);
 }
