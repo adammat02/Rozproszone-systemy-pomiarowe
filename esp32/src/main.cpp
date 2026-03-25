@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "wifi_manager.h"
 #include "mqtt_manager.h"
+#include "time_sync.h"
 #include "secrets.h"
 #include "device.h"
 
@@ -25,6 +26,7 @@ void setup()
 
   connectWiFi();
   mqttClient.connectMQTT();
+  synchronizeTime();
 }
 
 void loop()
@@ -40,9 +42,16 @@ void loop()
   }
 
   mqttClient.loop();
-  
+
+  long long time = 0;
+  if (isTimeSynchronized())
+  {
+    time = getTimestampMs();
+  }
+
   float tempC = temperatureRead();
-  mqttClient.publishMeasurement("temperature", tempC, "C");
+
+  mqttClient.publishMeasurement("temperature", tempC, "C", time);
   
   delay(5000);
 }

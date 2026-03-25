@@ -30,14 +30,14 @@ void mqtt_manager::connectMQTT()
   }
 }
 
-void mqtt_manager::publishMeasurement(const String &sensor, float value, const String &unit)
+void mqtt_manager::publishMeasurement(const String &sensor, float value, const String &unit, long long ts_ms)
 {
   StaticJsonDocument<256> doc;
   doc["device_id"] = deviceId;
   doc["sensor"] = sensor;
   doc["value"] = value;
   doc["unit"] = unit;
-  doc["ts_ms"] = millis();
+  doc["ts_ms"] = ts_ms;
 
   char payload[256];
   serializeJson(doc, payload);
