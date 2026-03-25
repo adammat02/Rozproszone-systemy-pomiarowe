@@ -50,3 +50,22 @@ void mqtt_manager::publishMeasurement(const String &sensor, float value, const S
   Serial.println(topic);
   Serial.println(payload);
 }
+
+void mqtt_manager::publishStatus(const String &status, long long ts_ms)
+{
+  StaticJsonDocument<256> doc;
+  doc["device_id"] = deviceId;
+  doc["status"] = status;
+  doc["ts_ms"] = ts_ms;
+
+  char payload[256];
+  serializeJson(doc, payload);
+
+  String topic;
+  topic = mainTopic + "/" + "status";
+
+  mqttClient.publish(topic.c_str(), payload);
+  Serial.print("Publikacja na topic: ");
+  Serial.println(topic);
+  Serial.println(payload);
+}

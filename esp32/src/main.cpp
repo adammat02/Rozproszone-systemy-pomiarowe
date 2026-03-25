@@ -27,6 +27,7 @@ void setup()
   connectWiFi();
   mqttClient.connectMQTT();
   synchronizeTime();
+  mqttClient.publishStatus("online", getTimestampMs());
 }
 
 void loop()

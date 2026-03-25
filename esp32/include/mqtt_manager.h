@@ -17,6 +17,7 @@ public:
   void begin(const String &deviceID, const String &deviceTopic);
   void connectMQTT();
   void publishMeasurement(const String &sensor, float value, const String &unit, long long ts_ms);
+  void publishStatus(const String &status, long long ts_ms);
   bool isConnected() { return mqttClient.connected(); }
   bool loop() { return mqttClient.loop(); }
 };
