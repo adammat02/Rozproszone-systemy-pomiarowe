@@ -11,3 +11,14 @@ CREATE TABLE IF NOT EXISTS measurements (
     received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS statuses (
+    id SERIAL PRIMARY KEY,
+    group_id TEXT,
+    device_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    ts_ms BIGINT NOT NULL,
+    seq INTEGER,
+    topic TEXT,
+    received_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
