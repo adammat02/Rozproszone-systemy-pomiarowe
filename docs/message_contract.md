@@ -39,7 +39,7 @@ Poniżej znajduje się przykład poprawnej wiadomości pomiarowej:
 
 
 ## 5. Przykłady wiadomości błędnych
-Przedstawiono przykłady błędnej wiadomości poprawionej.
+Przedstawiono przykłady błędnej wiadomości pomiarowej.
 
 1.  W tej wiadomości brakuje pola ts_ms, które jest kluczowe w określeniu dokładnego czasu pomiaru. 
 
