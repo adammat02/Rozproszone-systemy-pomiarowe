@@ -1,12 +1,15 @@
 #include "mqtt_manager.h"
 #include "secrets.h"
 
+#define SCHEMA_VERSION 1
+
 mqtt_manager::mqtt_manager(WiFiClient& espClient) : mqttClient(espClient) {}
 
 void mqtt_manager::begin(const String& deviceID, const String& deviceTopic)
 {
   mainTopic = deviceTopic;
   deviceId = deviceID;
+  seq_counter = 0;
 }
 
 void mqtt_manager::connectMQTT()
@@ -32,12 +35,15 @@ void mqtt_manager::connectMQTT()
 
 void mqtt_manager::publishMeasurement(const String &sensor, float value, const String &unit, long long ts_ms)
 {
-  StaticJsonDocument<256> doc;
+  JsonDocument doc;
+  doc["schema_version"] = SCHEMA_VERSION;
+  doc["group_id"] = MQTT_GROUP;
   doc["device_id"] = deviceId;
   doc["sensor"] = sensor;
   doc["value"] = value;
   doc["unit"] = unit;
   doc["ts_ms"] = ts_ms;
+  doc["seq"] = seq_counter++;
 
   char payload[256];
   serializeJson(doc, payload);
@@ -53,10 +59,13 @@ void mqtt_manager::publishMeasurement(const String &sensor, float value, const S
 
 void mqtt_manager::publishStatus(const String &status, long long ts_ms)
 {
-  StaticJsonDocument<256> doc;
+  JsonDocument doc;
+  doc["schema_version"] = SCHEMA_VERSION;
+  doc["group_id"] = MQTT_GROUP;
   doc["device_id"] = deviceId;
   doc["status"] = status;
   doc["ts_ms"] = ts_ms;
+  doc["seq"] = seq_counter++;
 
   char payload[256];
   serializeJson(doc, payload);
