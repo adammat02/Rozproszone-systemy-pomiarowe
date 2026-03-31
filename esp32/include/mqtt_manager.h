@@ -11,7 +11,8 @@ class mqtt_manager
   PubSubClient mqttClient;
   String deviceId;
   String mainTopic;
-  uint seq_counter;
+  uint seq_data_counter;
+  uint seq_status_counter;
 
 public:
   mqtt_manager(WiFiClient &espClient);
