@@ -1,7 +1,12 @@
 from flask import Flask, jsonify, request 
+from models import measurement_to_dict
 from db import get_connection
 
 app = Flask(__name__)
+
+@app.route("/")
+def hello_world():
+    return "<p>Hello World!</p>"
 
 # 1. Sprawdzenie stanu aplikacji
 @app.route("/health", methods=["GET"])
@@ -24,13 +29,7 @@ def get_measurements():
         cur.close()
         conn.close()
 
-        result = []
-        for row in rows:
-            result.append({
-                "id": row[0], "group_id": row[1], "device_id": row[2],
-                "sensor": row[3], "value": row[4], "unit": row[5],
-                "ts_ms": row[6], "seq": row[7], "topic": row[8]
-            })
+        result = [measurement_to_dict(row) for row in rows]
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -54,11 +53,7 @@ def get_latest_measurement():
         if row is None:
             return jsonify({"message": "Brak danych"}), 404
 
-        return jsonify({
-            "id": row[0], "group_id": row[1], "device_id": row[2],
-            "sensor": row[3], "value": row[4], "unit": row[5],
-            "ts_ms": row[6], "seq": row[7], "topic": row[8]
-        })
+        return jsonify(measurement_to_dict(row))
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -97,13 +92,7 @@ def get_measurement_history():
         cur.close()
         conn.close()
 
-        result = []
-        for row in rows:
-            result.append({
-                "id": row[0], "group_id": row[1], "device_id": row[2],
-                "sensor": row[3], "value": row[4], "unit": row[5],
-                "ts_ms": row[6], "seq": row[7], "topic": row[8]
-            })
+        result = [measurement_to_dict(row) for row in rows]
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500

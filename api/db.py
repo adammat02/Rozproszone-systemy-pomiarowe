@@ -1,9 +1,5 @@
 import psycopg2
-
-DB_HOST = "database"
-DB_NAME = "postgres"
-DB_USER = "postgres"
-DB_PASSWORD = "postgres"
+from config import *
 
 def get_connection():
     return psycopg2.connect(
