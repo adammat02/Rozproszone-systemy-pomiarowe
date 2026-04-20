@@ -62,6 +62,7 @@ def get_latest_measurement():
 def get_measurement_history():
     try:
         device_id = request.args.get("device_id")
+        group_id = request.args.get("group_id")
         sensor = request.args.get("sensor")
         limit = request.args.get("limit", default=20, type=int)
 
@@ -80,6 +81,10 @@ def get_measurement_history():
             query += " AND device_id = %s"
             params.append(device_id)
 
+        if group_id:
+            query += " AND group_id = %s"
+            params.append(group_id)
+
         if sensor:
             query += " AND sensor = %s"
             params.append(sensor)
@@ -96,6 +101,61 @@ def get_measurement_history():
         return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+# 5. Dostępne urządzenia
+@app.route("/devices", methods=["GET"])
+def get_devices_list():
+    try:
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT DISTINCT device_id
+            FROM measurements
+            WHERE device_id IS NOT NULL
+            ORDER BY device_id
+        """)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        result = [row[0] for row in rows]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+# 6. Dostępne czujniki
+@app.route("/sensors", methods=["GET"])
+def get_sensors_list():
+    try:
+        device_id = request.args.get("device_id")
+        conn = get_connection()
+        cur = conn.cursor()
+
+        query = """
+            SELECT DISTINCT device_id, sensor
+            FROM measurements
+            WHERE 1=1
+        """
+
+        params = []
+
+        if device_id:
+            query += " AND device_id = %s"
+            params.append(device_id)
+
+        query += " ORDER BY device_id"
+
+        cur.execute(query, params)
+        rows = cur.fetchall()
+        cur.close()
+        conn.close()
+
+        result = [{"device_id": row[0], "sensor": row[1]} for row in rows]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
