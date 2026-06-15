@@ -23,7 +23,9 @@ void mqtt_manager::connectMQTT()
     }
 
     Serial.print("Laczenie z MQTT...");
+    deviceId = "esp32-pola";
     
+    // Konfiguracja "Testamentu" (Last Will and Testament)
     String willTopic = mainTopic + "/status";
     
     JsonDocument doc;
@@ -31,20 +33,21 @@ void mqtt_manager::connectMQTT()
     doc["group_id"] = MQTT_GROUP;
     doc["device_id"] = deviceId;
     doc["status"] = "offline";
-    doc["ts_ms"] = 0;
+    doc["ts_ms"] = 0; 
     doc["seq"] = seq_status_counter;
     doc["type"] = "status";
     
     String willPayload;
     serializeJson(doc, willPayload);
 
+    // Połączenie z parametrami LWT
     bool ok = mqttClient.connect(
         deviceId.c_str(),
         NULL,           
         NULL,           
         willTopic.c_str(), 
         0,              
-        true,           
+        true,           // retain = true, żeby broker zapamiętał status offline
         willPayload.c_str()
     );
 
@@ -67,7 +70,9 @@ void mqtt_manager::publishMeasurement(const String &sensor, float value, const S
     doc["unit"] = unit;
     doc["ts_ms"] = ts_ms;
     doc["seq"] = seq_data_counter++;
-    doc["type"] = "data";
+    
+    // ZMIANA: "meas" zamiast "data", żeby pasowało do Twojego Ingestora i kontraktu v2!
+    doc["type"] = "meas"; 
 
     char payload[256];
     serializeJson(doc, payload);
@@ -96,6 +101,7 @@ void mqtt_manager::publishStatus(const String &status, long long ts_ms)
 
     String topic = mainTopic + "/status";
 
+    // retain = true, nowi subskrybenci od razu dostaną obecny status
     mqttClient.publish(topic.c_str(), payload, true); 
     Serial.print("Publikacja na topic: ");
     Serial.println(topic);
