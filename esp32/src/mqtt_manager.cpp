@@ -25,7 +25,7 @@ void mqtt_manager::connectMQTT()
     Serial.print("Laczenie z MQTT...");
     deviceId = "esp32-pola";
     
-    // Konfiguracja "Testamentu" (Last Will and Testament)
+    // Konfiguracja Last Will and Testament
     String willTopic = mainTopic + "/status";
     
     JsonDocument doc;
@@ -71,7 +71,6 @@ void mqtt_manager::publishMeasurement(const String &sensor, float value, const S
     doc["ts_ms"] = ts_ms;
     doc["seq"] = seq_data_counter++;
     
-    // ZMIANA: "meas" zamiast "data", żeby pasowało do Twojego Ingestora i kontraktu v2!
     doc["type"] = "meas"; 
 
     char payload[256];

@@ -7,7 +7,7 @@ from datetime import datetime
 st.set_page_config(page_title="RSP Dashboard", layout="wide")
 st.title("Rozproszone Systemy Pomiarowe - Dashboard")
 
-# --- OBSZAR 1: POŁĄCZENIE I KONFIGURACJA (Pasek boczny) ---
+# POŁĄCZENIE I KONFIGURACJA
 st.sidebar.header("Konfiguracja API")
 api_url = st.sidebar.text_input("API URL", "http://localhost:5001")
 
@@ -24,7 +24,7 @@ if st.sidebar.button("Test API"):
 
 st.sidebar.markdown("---")
 
-# --- OBSZAR 2: WYBÓR I STEROWANIE ---
+# WYBÓR I STEROWANIE 
 st.sidebar.header("Filtry i konfiguracja")
 
 # Pobranie listy urządzeń z endpointu /devices
@@ -40,7 +40,7 @@ selected_device = st.sidebar.selectbox("Device ID", device_list)
 selected_sensor = st.sidebar.text_input("Sensor", "temperature")
 limit = st.sidebar.number_input("Limit rekordów", min_value=1, max_value=1000, value=50)
 
-# --- OBSZAR 3: PREZENTACJA DANYCH ---
+# PREZENTACJA DANYCH 
 col1, col2 = st.columns([1, 2])
 
 with col1:
