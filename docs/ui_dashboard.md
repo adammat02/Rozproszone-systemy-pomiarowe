@@ -19,8 +19,8 @@ Zgodnie z założeniami projektowymi, panel został podzielony na 3 główne obs
 * **Historia i Trend:** Wykorzystuje endpoint `/measurements/history` z nałożonymi filtrami. Ładuje odpowiedź JSON do ramki danych `pandas`, a następnie generuje interaktywny wykres liniowy oraz tabelę surowych danych.
 
 ## 3. Instrukcja Uruchomienia
-1. Upewnij się, że kontenery z bazą danych i REST API działają w tle (`docker compose up -d`).
-2. Zainstaluj wymagane pakiety: `pip install streamlit requests pandas`.
-3. Uruchom aplikację poleceniem z poziomu terminala:
+1. Upewnić się, że kontenery z bazą danych i REST API działają w tle (`docker compose up -d`).
+2. Zainstalować wymagane pakiety: `pip install streamlit requests pandas`.
+3. Uruchomić aplikację poleceniem z poziomu terminala:
    `streamlit run dashboard.py`
 4. Aplikacja otworzy się automatycznie w domyślnej przeglądarce pod adresem `http://localhost:8501`.

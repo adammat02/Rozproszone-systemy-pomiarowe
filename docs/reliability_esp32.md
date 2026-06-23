@@ -8,7 +8,7 @@ Rozdzielenie tych logik ułatwia diagnostykę problemów sieciowych od problemó
 
 ## 2. Topic Statusowy i Last Will (LWT)
 System odseparowuje komunikaty pomiarowe od statusowych. 
-* **Topic statusowy:** `lab/g03/<device_id>/status`
+* **Topic statusowy:** `lab/grupa/esp32-pola/status`
 * **Status online:** Publikowany automatycznie z poziomu funkcji reconnect natychmiast po poprawnym odzyskaniu połączenia z brokerem.
 * **Status offline (Last Will):** Zdefiniowano mechanizm LWT. W momencie rejestracji w brokerze, ESP32 deponuje wiadomość statusową awaryjną (`offline`). Jeśli urządzenie zostanie nagle odłączone od zasilania, broker automatycznie roześle ten komunikat do aplikacji Ingestora/UI.
 

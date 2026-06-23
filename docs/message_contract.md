@@ -19,8 +19,8 @@ Publikowana na topic: `lab/<group_id>/<device_id>/<sensor_type>`
 ```json
 {
   "schema_version": 2,
-  "group_id": "g02",
-  "device_id": "esp32-01",
+  "group_id": "grupa",
+  "device_id": "esp32-pola",
   "sensor": "temperature",
   "value": 24.5,
   "unit": "C",
